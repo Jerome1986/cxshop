@@ -12,7 +12,7 @@
 
 import { useUserStore } from '@/store'
 
-const baseURL = ''
+const baseURL = 'https://c87iiko0rt.gzg.sealos.run'
 
 // 添加拦截器
 const httpInterceptor = {
@@ -55,11 +55,11 @@ uni.addInterceptor('uploadFile', httpInterceptor)
  */
 type Data<T> = {
   code: string
-  msg: string
+  message: string
   data: T
 }
 // 2.2 添加类型，支持泛型
-export const http = <T>(options: UniApp.RequestOptions) => {
+export const request = <T>(options: UniApp.RequestOptions) => {
   // 1. 返回 Promise 对象
   return new Promise<Data<T>>((resolve, reject) => {
     uni.request({
@@ -80,7 +80,7 @@ export const http = <T>(options: UniApp.RequestOptions) => {
           // 其他错误 -> 根据后端错误信息轻提示
           uni.showToast({
             icon: 'none',
-            title: (res.data as Data<T>).msg || '请求错误',
+            title: (res.data as Data<T>).message || '请求错误',
           })
           reject(res)
         }
