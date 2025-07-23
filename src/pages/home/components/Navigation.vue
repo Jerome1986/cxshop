@@ -9,6 +9,9 @@ defineProps<{
 // 跳转分类
 const goNavigation = (cate_id: string) => {
   console.log('goNavigation')
+  uni.navigateTo({
+    url: '/pages/cate/cateB',
+  })
 }
 </script>
 

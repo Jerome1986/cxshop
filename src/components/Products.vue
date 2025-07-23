@@ -4,12 +4,17 @@ import type { ProductItem } from '@/types/ProductItem'
 import { ref } from 'vue'
 
 defineProps<{
+  needType: number
+  cateName?: string
   productData: ProductItem[]
 }>()
 
 // 跳转商品详情
 const goDetail = (productId: string) => {
   console.log('go detail', productId)
+  uni.navigateTo({
+    url: `/pages/productDetail/productDetail?productId=${productId}`,
+  })
 }
 
 // 点击登录
@@ -19,7 +24,8 @@ const login = () => {
 }
 </script>
 <template>
-  <view class="productList">
+  <!-- 首页 -->
+  <view class="productList" v-if="needType === 1">
     <slot></slot>
     <!-- 商品卡片区域 -->
     <view class="proList">
@@ -36,9 +42,28 @@ const login = () => {
       </view>
     </view>
   </view>
+  <!-- 分类 -->
+  <view class="productContent" v-else>
+    <view class="title">
+      <text>{{ cateName }}</text>
+    </view>
+    <scroll-view scroll-y="true" class="scroll">
+      <view @tap="goDetail(item._id)" class="proList" v-for="item in productData" :key="item._id">
+        <image :src="item.cover" mode="aspectFill"></image>
+        <view class="text">
+          <view class="proName">{{ item.name }}</view>
+          <view class="dec">{{ item.dec }}</view>
+          <view class="price" v-if="token">￥{{ item.price }}</view>
+          <view class="price" v-else @tap="login">需登录</view>
+        </view>
+        <view class="addPro">+</view>
+      </view>
+    </scroll-view>
+  </view>
 </template>
 
 <style lang="scss" scoped>
+/*首页样式*/
 .productList {
   padding-bottom: 40rpx;
   .proList {
@@ -94,6 +119,65 @@ const login = () => {
         border-radius: 50%;
         background-color: $cx-brandColor;
       }
+    }
+  }
+}
+/*分类样式*/
+.productContent {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  .title {
+    margin: 30rpx 0;
+    height: 30rpx;
+    text-align: center;
+  }
+  .scroll {
+    height: 840rpx;
+    .proList {
+      position: relative;
+      display: flex;
+      margin-bottom: 30rpx;
+      height: 200rpx;
+      image {
+        margin-right: 20rpx;
+        width: 200rpx;
+        height: 180rpx;
+      }
+      .text {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: space-evenly;
+        .proName {
+          @include ellipsis(1);
+          font-size: 28rpx;
+          font-weight: 700;
+        }
+        .dec {
+          @include ellipsis(1);
+          color: $cx-dec;
+          font-size: 24rpx;
+        }
+        .price {
+          color: $cx-price;
+          font-size: 24rpx;
+        }
+      }
+    }
+    .addPro {
+      position: absolute;
+      bottom: 20rpx;
+      right: 20rpx;
+      width: 40rpx;
+      height: 40rpx;
+      line-height: 38rpx;
+      color: #fff;
+      font-size: 40rpx;
+      text-align: center;
+      border-radius: 50%;
+      background-color: $cx-brandColor;
     }
   }
 }

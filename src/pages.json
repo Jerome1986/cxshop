@@ -1,4 +1,11 @@
 {
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      // uni-ui 规则如下配置
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+    }
+  },
   "pages": [
     //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
     {
@@ -27,6 +34,20 @@
       "path": "pages/my/my",
       "style": {
         "navigationBarTitleText": "我的",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/cate/cateB",
+      "style": {
+        "navigationBarTitleText": "分类",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/productDetail/productDetail",
+      "style": {
+        "navigationBarTitleText": "商品详情",
         "enablePullDownRefresh": false
       }
     }

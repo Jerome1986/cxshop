@@ -1,16 +1,18 @@
 <script setup lang="ts">
+import Banner from '@/components/Banner.vue'
+import Navigation from '@/pages/home/components/Navigation.vue'
+import Products from '@/components/Products.vue'
+import PageSkeleton from '@/pages/home/components/PageSkeleton.vue'
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import type { BannerItem } from '@/types/BannerItem'
 import { getBannerApi } from '@/api/banner'
-import Banner from '@/components/Banner.vue'
-import Navigation from '@/pages/home/components/Navigation.vue'
 import type { CateItem } from '@/types/CateItem'
 import { getCateApi } from '@/api/category'
-import Products from '@/components/Products.vue'
-import type { ProductItem } from '@/types/ProductItem'
-import { getProductApi } from '@/api/product'
-import PageSkeleton from '@/pages/home/components/PageSkeleton.vue'
+import { useProductStore } from '@/store/modules/product'
+
+// 定义store
+const productStore = useProductStore()
 
 //获取首页banner
 const bannerList = ref<BannerItem[]>([])
@@ -27,37 +29,10 @@ const getCateList = async () => {
   cateList.value = res.data
 }
 
-// 分页
-const page = ref({
-  pageNum: 1,
-  pageSize: 8,
-})
-
-// 初始商品数据
-const productList = ref<ProductItem[]>([])
-
-// 已结束标记
-const finish = ref(false)
-// 获取首页产品数据
-const getProductList = async (pageNum?: number, pageSize?: number) => {
-  // 退出分页判断
-  if (finish.value === true) {
-    return uni.showToast({ icon: 'none', title: '已经到底啦' })
-  }
-  const res = await getProductApi(pageNum, pageSize)
-  productList.value.push(...res.data.list)
-  console.log('getProductList', res.data, page.value.pageNum, finish.value)
-  if (page.value.pageNum < res.data.page) {
-    page.value.pageNum++
-  } else {
-    finish.value = true
-  }
-}
-
 // 滑动触底
 const onScroll = async () => {
   console.log('触底')
-  await getProductList(page.value.pageNum, page.value.pageSize)
+  await productStore.getProductList(productStore.page.pageNum, productStore.page.pageSize)
 }
 
 // 是否加载中标记
@@ -68,7 +43,7 @@ onLoad(async () => {
   await Promise.all([
     getBannerList(),
     getCateList(),
-    getProductList(page.value.pageNum, page.value.pageSize),
+    productStore.getProductList(productStore.page.pageNum, productStore.page.pageSize),
   ])
   isLoading.value = false
 })
@@ -86,7 +61,7 @@ onLoad(async () => {
           <!-- 金刚区一级导航 -->
           <Navigation :cate-data="cateList"></Navigation>
           <!-- 每日精选 -->
-          <Products :product-data="productList">
+          <Products :needType="1" :product-data="productStore.productList">
             <view class="title">每日精选</view>
           </Products>
         </view>
