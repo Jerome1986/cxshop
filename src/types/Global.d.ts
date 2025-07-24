@@ -11,3 +11,12 @@ export type PageResult<T> = {
   /** 总页数 */
   page: number
 }
+
+/**
+ * 微信手机号登录结果类型
+ */
+
+export type WxMobileLogin = {
+  /** 用户手机号 */
+  phoneNumber: string
+}

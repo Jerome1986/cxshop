@@ -1,9 +1,14 @@
 {
+  // 组件自动引入规则
   "easycom": {
+    // 是否开启自动扫描
     "autoscan": true,
+    // 以正则方式自定义组件匹配规则
     "custom": {
       // uni-ui 规则如下配置
       "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+      // 以 Xtx 开头的组件，在 components 文件夹中查找引入（需要重启服务器）
+     // "^Xtx(.*)": "@/components/Xtx$1.vue"
     }
   },
   "pages": [
@@ -48,6 +53,13 @@
       "path": "pages/productDetail/productDetail",
       "style": {
         "navigationBarTitleText": "商品详情",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录",
         "enablePullDownRefresh": false
       }
     }
