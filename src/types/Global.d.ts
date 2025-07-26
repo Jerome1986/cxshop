@@ -20,3 +20,27 @@ export type WxMobileLogin = {
   /** 用户手机号 */
   phoneNumber: string
 }
+
+/**
+ * 文件类型
+ */
+
+export type File = {
+  /** 用户手机号 */
+  originalname: string
+  path: string
+  mimetype: string
+}
+
+/**
+ * 点赞返回类型
+ */
+
+export type loveResult = {
+  /** 用户唯一标识 */
+  userId: string
+  /** 商品唯一标识 */
+  productId: string
+  /** 点赞状态 */
+  islove: boolean
+}

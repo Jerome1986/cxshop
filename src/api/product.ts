@@ -32,3 +32,17 @@ export const getProductByIdApi = (productId: string) => {
     data: { productId },
   })
 }
+
+/**
+ * 根据商品名字搜索商品
+ * /product/search
+ * @param {string} searchTxt - 搜索内容
+ */
+
+export const productSearchApi = (searchTxt: string) => {
+  return request<ProductItem>({
+    method: 'GET',
+    url: '/product/search',
+    data: { searchTxt },
+  })
+}

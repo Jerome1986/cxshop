@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { getProductApi, getProductByIdApi } from '@/api/product'
+import { getProductByIdApi } from '@/api/product'
 import { onLoad } from '@dcloudio/uni-app'
 import type { ProductItem } from '@/types/ProductItem'
 import Products from '@/components/Products.vue'
-import { useProductStore } from '@/store'
+import { useCartStore, useProductStore, useUserStore } from '@/store'
+import type { CartItem } from '@/types/cart'
+import { userLoveApi, userLoveCheckApi } from '@/api/user'
 
 //获取安全距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -15,6 +17,9 @@ const getProductData = async (productId: string) => {
   productData.value = res.data
 }
 
+// 定义store
+const cartStore = useCartStore()
+const userStore = useUserStore()
 // 获取商品store -- 直接用于热门商品数据
 const productStore = useProductStore()
 // 当前轮播图
@@ -24,15 +29,94 @@ const onchange = (e: any) => {
   console.log('current', e)
 }
 
+// 加入购物车
+const addCart = () => {
+  console.log('addCart')
+
+  // 构建参数
+  const proParams: CartItem = {
+    userId: userStore.profile._id,
+    productId: productData.value?._id || '',
+    productName: productData.value?.name || '',
+    dec: productData.value?.dec || '',
+    price: productData.value?.price || 0,
+    quantity: 1,
+    cover: productData.value?.cover || '',
+    isSelected: true,
+  }
+
+  cartStore.addCartShop(proParams)
+  uni.showToast({
+    icon: 'success',
+    title: '添加成功',
+    mask: true,
+  })
+}
+
+// 处理点击立即购买
+const buyNow = () => {
+  console.log('buyNow')
+  // 构建参数
+  const proParams: CartItem = {
+    userId: userStore.profile._id,
+    productId: productData.value?._id || '',
+    productName: productData.value?.name || '',
+    dec: productData.value?.dec || '',
+    price: productData.value?.price || 0,
+    quantity: 1,
+    cover: productData.value?.cover || '',
+    isSelected: true,
+  }
+  // 1.将当前商品加入购物车
+  cartStore.addCartShop(proParams)
+  // 2.跳转到购物车页面
+  setTimeout(() => {
+    uni.switchTab({
+      url: '/pages/cart/cart',
+    })
+  }, 800)
+}
+
+const islove = ref(false)
+
+// 检查用户是否点赞
+const checkUserLove = async (userId: string, productId: string) => {
+  const res = await userLoveCheckApi(userId, productId)
+  console.log('检查点赞', res)
+  if (!res.data) {
+    islove.value = false
+  } else {
+    islove.value = res.data.islove
+  }
+}
+
+// 处理收藏点赞
+const handleLove = async () => {
+  const res = await userLoveApi(userStore.profile._id, productData.value._id, islove.value)
+  console.log('点赞结果', res)
+  if (res.code === 200) {
+    islove.value = res.data.islove
+    await uni.showToast({
+      icon: 'success',
+      title: res.message,
+      mask: true,
+    })
+  }
+}
+
 // 定义页面参数类型
 interface ProductPageOptions {
   productId: string
 }
 
 // 获取页面参数
-onLoad((query) => {
+onLoad(async (query) => {
   const options = query as ProductPageOptions
-  getProductData(options.productId)
+  console.log(options, userStore.profile._id)
+  await Promise.all([
+    getProductData(options.productId),
+    checkUserLove(userStore.profile._id, options.productId),
+  ])
 })
 </script>
 
@@ -106,9 +190,9 @@ onLoad((query) => {
   <!-- 用户操作 -->
   <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
     <view class="icons">
-      <button class="icons-button">
+      <button class="icons-button" :class="{ activeLove: islove }" @tap="handleLove">
         <text class="icon-heart"></text>
-        收藏
+        {{ islove ? '收藏' : '未收藏' }}
       </button>
       <button class="icons-button" open-type="contact">
         <text class="icon-handset"></text>
@@ -116,9 +200,10 @@ onLoad((query) => {
       </button>
       <navigator class="icons-button" url="/pages/cart/cart" open-type="switchTab">
         <text class="icon-cart"></text>
-        <!--        <text class="cratNum" v-if="cartStore.cartList.length">-->
-        <!--          {{ cartStore.cartList.length }}-->
-        <!--        </text>-->
+        <!-- 当前购物车数量 -->
+        <text class="cratNum" v-if="cartStore.cartList.length">
+          {{ cartStore.cartNum }}
+        </text>
         购物车
       </navigator>
     </view>
@@ -421,6 +506,10 @@ page {
         background-color: orangered;
         border-radius: 50%;
       }
+    }
+    /*收藏激活样式*/
+    .activeLove {
+      color: $cx-price;
     }
 
     text {

@@ -44,6 +44,10 @@ const searchData = ref('')
 // 点击搜索
 const searchBtn = () => {
   console.log('searchBtn')
+  if (!searchData.value) return uni.showToast({ icon: 'none', title: '请输入要搜索的内容' })
+  uni.navigateTo({
+    url: `/pages/search/search?text=${searchData.value}`,
+  })
 }
 // 控制取消按钮
 const cannal = ref('none')

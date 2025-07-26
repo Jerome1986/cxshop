@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import type { ProductItem } from '@/types/ProductItem'
 import { ref } from 'vue'
+import { useUserStore } from '@/store'
 
 defineProps<{
   needType: number
@@ -9,18 +10,37 @@ defineProps<{
   productData: ProductItem[]
 }>()
 
+// 定义store
+const userStore = useUserStore()
+
 // 跳转商品详情
 const goDetail = (productId: string) => {
   console.log('go detail', productId)
+  // 去详情之前判断是否登录
+  if (!userStore.profile._id) {
+    return uni.showModal({
+      title: '提示',
+      content: '登陆后查看详情',
+      confirmColor: '#27ba9b',
+      success: (res) => {
+        if (res.confirm) {
+          uni.navigateTo({ url: '/pages/login/login' })
+        }
+      },
+    })
+  }
+
+  // 登录就直接跳转
   uni.navigateTo({
     url: `/pages/productDetail/productDetail?productId=${productId}`,
   })
 }
 
 // 点击登录
-const token = ref('')
 const login = () => {
-  console.log('login')
+  uni.navigateTo({
+    url: '/pages/login/login',
+  })
 }
 </script>
 <template>
@@ -35,7 +55,7 @@ const login = () => {
         <view class="proText">
           <view class="proName">{{ item.name }}</view>
           <view class="dec">{{ item.dec }}</view>
-          <view class="price" v-if="true">￥{{ item.price.toFixed(2) }}</view>
+          <view class="price" v-if="userStore.profile._id">￥{{ item.price.toFixed(2) }}</view>
           <view class="price" v-else @tap="login">登录获取报价</view>
           <view class="addPro">+</view>
         </view>
@@ -53,7 +73,7 @@ const login = () => {
         <view class="text">
           <view class="proName">{{ item.name }}</view>
           <view class="dec">{{ item.dec }}</view>
-          <view class="price" v-if="token">￥{{ item.price }}</view>
+          <view class="price" v-if="userStore.profile._id">￥{{ item.price }}</view>
           <view class="price" v-else @tap="login">需登录</view>
         </view>
         <view class="addPro">+</view>

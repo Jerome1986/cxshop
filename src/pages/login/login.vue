@@ -9,34 +9,65 @@ const userStore = useUserStore()
 const handleMobileLogin = (e: any) => {
   console.log('handleMobileLogin', e)
 
-  // 构建参数
   const params = {
     code: '',
     encryptedData: e.detail.encryptedData,
     iv: e.detail.iv,
   }
 
-  // 获取微信接口调取凭证code
   uni.login({
+    // 获取code成功
     success: async (res) => {
-      console.log(res)
-      params.code = res.code
-      //  微信登录
-      const wxRes = await wxMobileLoginApi(params.code, params.encryptedData, params.iv)
-      console.log(wxRes)
-      if (wxRes.code == 200) {
-        // 存入用户数据
-        userStore.setProfile(wxRes.data)
-        setTimeout(() => {
-          uni.switchTab({
-            url: '/pages/my/my',
-          })
-        }, 800)
+      if (!res.code) {
         await uni.showToast({
           icon: 'none',
-          title: '登录成功',
+          title: '获取code失败',
         })
+        console.error('uni.login 获取code失败', res)
+        return
       }
+
+      params.code = res.code
+
+      try {
+        const wxRes = await wxMobileLoginApi(params.code, params.encryptedData, params.iv)
+        console.log('wxMobileLoginApi 返回', wxRes)
+
+        if (wxRes.code === 200 && wxRes.data) {
+          userStore.setProfile(wxRes.data)
+
+          await uni.showToast({
+            icon: 'success',
+            title: '登录成功',
+          })
+
+          setTimeout(() => {
+            uni.switchTab({
+              url: '/pages/home/home',
+            })
+          }, 800)
+        } else {
+          await uni.showToast({
+            icon: 'none',
+            title: wxRes.message || '登录失败，请稍后重试',
+          })
+          console.warn('登录接口响应失败', wxRes)
+        }
+      } catch (err) {
+        await uni.showToast({
+          icon: 'none',
+          title: '请求异常，请检查网络',
+        })
+        console.error('调用登录接口异常', err)
+      }
+    },
+    // 获取code失败
+    fail: (err) => {
+      uni.showToast({
+        icon: 'none',
+        title: '微信登录失败',
+      })
+      console.error('login 失败', err)
     },
   })
 }

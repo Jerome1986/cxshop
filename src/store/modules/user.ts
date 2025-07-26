@@ -11,6 +11,8 @@ export const useUserStore = defineStore(
       _id: '',
       avatarUrl: '',
       mobile: '',
+      gender: 1,
+      role: 'user',
       registerTime: '',
       status: '',
     })

@@ -17,7 +17,7 @@ const orderTypes = [
 </script>
 
 <template>
-  <scroll-view class="viewport" :scroll-y="true" :enable-back-to-top="true">
+  <scroll-view class="viewport" scroll-y="true" enable-back-to-top="true">
     <!-- 个人资料 -->
     <view class="profile" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
       <!-- 情况1：已登录 -->
@@ -49,7 +49,7 @@ const orderTypes = [
         </view>
       </view>
       <!--   跳转设置页--分包   -->
-      <navigator class="settings" url="/pagesMember/settings/settings" hover-class="none">
+      <navigator class="settings" url="/pagesMember/setting/setting" hover-class="none">
         设置
       </navigator>
     </view>
@@ -59,7 +59,7 @@ const orderTypes = [
         我的订单
         <navigator
           class="navigator"
-          url="/pagesMember/orderDetail/orderDetail?type=0"
+          url="/pagesMember/order/orderList?orderStatus=全部"
           hover-class="none"
         >
           查看全部订单
@@ -72,7 +72,7 @@ const orderTypes = [
           v-for="item in orderTypes"
           :key="item.type"
           :class="item.icon"
-          :url="`/pagesMember/orderDetail/orderDetail?type=${item.type}`"
+          :url="`/pagesMember/order/orderList?orderStatus=${item.text}`"
           class="navigator"
           hover-class="none"
         >
