@@ -1,6 +1,6 @@
 export type ProductItem = {
   /** 唯一标识 */
-  _id: string
+  _id?: string
   /** 产品名称 */
   name: string
   /** 产品描述 */
@@ -16,5 +16,5 @@ export type ProductItem = {
   /** 详情图库 */
   images: Array<string>
   /** 创建时间 */
-  createdAt: string
+  createdAt?: string
 }

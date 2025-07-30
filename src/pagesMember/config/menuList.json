@@ -1,0 +1,6 @@
+[
+  { "title": "用户管理", "path": "/pagesMember/userManage/userManage" },
+  { "title": "分类管理", "path": "/pagesMember/cateManage/cateManage" },
+  { "title": "商品管理", "path": "/pagesMember/proManage/proManage" },
+  { "title": "订单管理", "path": "/pagesMember/orderManage/orderManage" }
+]

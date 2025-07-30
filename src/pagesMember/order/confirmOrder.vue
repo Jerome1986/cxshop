@@ -30,10 +30,11 @@ const onChangeDelivery = (ev: any) => {
 // 确认订单
 const orderType = ref('待分拣')
 const orderSubmit = async () => {
+  const prolist = cartStore.cartList.filter((item) => item.isSelected)
   // 准备提交的数据
   const res = await orderAddApi(
     userStore.profile._id,
-    cartStore.cartList,
+    prolist,
     activeDelivery.value.text,
     buyerMessage.value,
     cartStore.cartTotal,

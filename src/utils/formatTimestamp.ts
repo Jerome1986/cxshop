@@ -14,3 +14,27 @@ export function formatTimestamp(timestamp: any) {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
+
+// 性别转换
+export const formatGender = (gender: number) => {
+  switch (gender) {
+    case 1:
+      return '男'
+    case 2:
+      return '女'
+    default:
+      return '未知'
+  }
+}
+
+// 角色转换
+export const formatRole = (role: string) => {
+  switch (role) {
+    case 'user':
+      return '用户'
+    case 'vip':
+      return '会员'
+    case 'admin':
+      return '管理员'
+  }
+}

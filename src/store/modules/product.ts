@@ -24,9 +24,10 @@ export const useProductStore = defineStore('product', () => {
   const finish = ref(false)
   // 获取首页产品数据
   const getProductList = async (pageNum?: number, pageSize?: number) => {
+    console.log('请求产品', finish.value)
     // 退出分页判断
     if (finish.value) {
-      return uni.showToast({ icon: 'none', title: '已经到底啦' })
+      return
     }
     const res = await getProductApi('', pageNum, pageSize)
     productList.value.push(...res.data.list)
@@ -38,10 +39,20 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
+  // 重置
+  const reset = () => {
+    page.value.pageNum = 1
+    page.value.pageSize = 8
+    finish.value = false
+    productList.value = []
+  }
+
   return {
     page,
     setPage,
     productList,
     getProductList,
+    finish,
+    reset,
   }
 })

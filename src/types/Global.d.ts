@@ -44,3 +44,58 @@ export type loveResult = {
   /** 点赞状态 */
   islove: boolean
 }
+
+/**
+ * 用户状态更新类型
+ */
+
+export type UserStatusResult = {
+  /** 更新操作状态 */
+  acknowledged: boolean
+  /** 实际被修改的条数 */
+  modified: number
+  /** 用户id */
+  userId: string
+  /** 用户账号状态 */
+  userStatus: string
+}
+
+/**
+ * 用户角色更新类型
+ */
+
+export type UserRoleResult = {
+  /** 更新操作状态 */
+  acknowledged: boolean
+  /** 实际被修改的条数 */
+  modified: number
+  /** 用户id */
+  userId: string
+  /** 用户角色 */
+  userRole: string
+}
+
+/**
+ * 通用新增返回类型
+ */
+
+export type AddResult = {
+  /** 新增id */
+  insertedId: string
+}
+
+/**
+ * 通用删除返回类型
+ */
+
+export type DeleteResult = {
+  acknowledged: boolean
+}
+
+/**
+ * 通用更新返回类型
+ */
+
+export type UpdateResult = {
+  acknowledged: boolean
+}

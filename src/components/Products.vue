@@ -50,7 +50,7 @@ const login = () => {
     <!-- 商品卡片区域 -->
     <view class="proList">
       <view @tap="goDetail(item._id)" class="proCard" v-for="item in productData" :key="item._id">
-        <image class="proPic" :src="item.cover" mode="aspectFill"></image>
+        <image class="proPic" :src="item.cover" mode="aspectFit"></image>
         <!-- 内容文本区域 -->
         <view class="proText">
           <view class="proName">{{ item.name }}</view>

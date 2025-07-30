@@ -2,9 +2,6 @@
 import { useProductStore, useUserStore } from '@/store'
 import Products from '@/components/Products.vue'
 
-//获取安全距离
-const { safeAreaInsets } = uni.getSystemInfoSync()
-
 // 定义store
 const userStore = useUserStore()
 const productStore = useProductStore()
@@ -19,7 +16,7 @@ const orderTypes = [
 <template>
   <scroll-view class="viewport" scroll-y="true" enable-back-to-top="true">
     <!-- 个人资料 -->
-    <view class="profile" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
+    <view class="profile">
       <!-- 情况1：已登录 -->
       <view class="overview" v-if="userStore.profile._id">
         <navigator url="/pagesMember/profile/profile" hover-class="none">
@@ -108,6 +105,7 @@ page {
 /* 用户信息 */
 .profile {
   margin-top: 20rpx;
+  padding-top: 88rpx;
   position: relative;
 
   .overview {

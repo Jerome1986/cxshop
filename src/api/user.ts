@@ -1,6 +1,6 @@
 import { request } from '@/utils/http'
 import type { UserItem } from '@/types/UserItem'
-import type { loveResult } from '@/types/Global'
+import type { loveResult, PageResult, UserRoleResult, UserStatusResult } from '@/types/Global'
 
 /**
  * 更新当前用户信息
@@ -43,6 +43,56 @@ export const userInfoGetApi = (userId: string) => {
     method: 'GET',
     url: '/user/ById',
     data: { userId },
+  })
+}
+
+/**
+ * 管理员获取所有用户
+ * /user/admin/all
+ * @param {string} role - 当前用户身份
+ */
+
+export const adminUserGetApi = (role: string) => {
+  return request<PageResult<UserItem[]>>({
+    method: 'GET',
+    url: '/user/admin/all',
+    data: { role },
+  })
+}
+
+/**
+ * 管理员更新用户登录状态
+ * /user/admin/userStatus
+ * @param {string}  role - 用户角色
+ * @param {string} userId - 当前用户id
+ * @param {string} userStatus - 当前用户账号状态
+ */
+
+export const userUpdateStatusApi = (role: string, userId: string, userStatus: string) => {
+  return request<UserStatusResult>({
+    method: 'POST',
+    url: '/user/admin/userStatus',
+    data: {
+      role,
+      userId,
+      userStatus,
+    },
+  })
+}
+
+/**
+ * 管理员设置用户角色
+ * /user/admin/userRole
+ * @param {string} role - 当前执行角色
+ * @param {string} userId - 操作用户id
+ * @param {string} userRole 操作对象角色
+ */
+
+export const userUpdateUserRoleApi = (role: string, userId: string, userRole: string) => {
+  return request<UserRoleResult>({
+    method: 'POST',
+    url: '/user/admin/userRole',
+    data: { role, userId, userRole },
   })
 }
 

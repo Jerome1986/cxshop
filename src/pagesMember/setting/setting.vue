@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { useUserStore } from '@/store'
 
+// 定义store
 const userStore = useUserStore()
+
+// 后台页面
+const handleAdmin = () => {
+  console.log('后台')
+  uni.reLaunch({ url: '/pagesMember/admin/admin' })
+}
 
 // 退出登录
 const onLogout = () => {
@@ -31,6 +38,7 @@ const onLogout = () => {
     <view class="list">
       <button hover-class="none" class="item" open-type="feedback">问题反馈</button>
       <button hover-class="none" class="item" open-type="contact">联系我们</button>
+      <button hover-class="none" class="item" @tap="handleAdmin">后台管理</button>
     </view>
     <!-- 操作按钮 -->
     <view class="action">

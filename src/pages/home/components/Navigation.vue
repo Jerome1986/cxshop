@@ -32,7 +32,7 @@ const goNavigation = (cate_id: string) => {
   gap: 8rpx;
   flex-wrap: wrap;
   padding: 10rpx;
-  height: 320rpx;
+  height: fit-content;
   border-radius: 20rpx;
   background-color: #fff;
   .item {

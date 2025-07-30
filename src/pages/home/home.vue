@@ -37,8 +37,10 @@ const onScroll = async () => {
 
 // 是否加载中标记
 const isLoading = ref(false)
+
 onLoad(async () => {
-  console.log('获取数据')
+  productStore.reset()
+  // 加载页面数据
   isLoading.value = true
   await Promise.all([
     getBannerList(),
@@ -46,6 +48,22 @@ onLoad(async () => {
     productStore.getProductList(productStore.page.pageNum, productStore.page.pageSize),
   ])
   isLoading.value = false
+
+  //  发送给朋友
+  const onShareAppMessage = () => {
+    return {
+      title: '晨曦生鲜配送', // 自定义分享标题
+      path: '/pages/home/home', // 自定义分享路径
+    }
+  }
+
+  //  开启朋友圈
+  const onShareTimeline = () => {
+    return {
+      title: '新鲜好物，极速送达',
+      query: 'source=timeline', //分享时带参数
+    }
+  }
 })
 </script>
 
@@ -64,6 +82,9 @@ onLoad(async () => {
           <Products :needType="1" :product-data="productStore.productList">
             <view class="title">每日精选</view>
           </Products>
+          <!--   触底提示   -->
+          <view class="tips" v-if="!productStore.finish">加载更多</view>
+          <view class="tips" v-else>已经到底啦~</view>
         </view>
       </template>
     </scroll-view>
@@ -85,6 +106,12 @@ onLoad(async () => {
       font-size: 32rpx;
       color: $cx-brandColor;
       border-radius: 20rpx;
+    }
+    /*加载见底提示*/
+    .tips {
+      text-align: center;
+      color: $cx-dec;
+      font-size: 24rpx;
     }
   }
 }

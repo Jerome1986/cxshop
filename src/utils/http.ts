@@ -31,7 +31,7 @@ const httpInterceptor = {
     }
     // 4. 添加 token 请求头标识
     const userStore = useUserStore()
-    const token = userStore.profile?.token
+    const token = userStore.profile?._id
     if (token) {
       options.header.Authorization = token
     }
@@ -58,6 +58,17 @@ type Data<T> = {
   message: string
   data: T
 }
+
+function safeShowToast(msg: string) {
+  if (!msg || msg.trim() === '') return
+  uni.showToast({
+    icon: 'none',
+    title: msg,
+    duration: 2000,
+    mask: true,
+  })
+}
+
 // 2.2 添加类型，支持泛型
 export const request = <T>(options: UniApp.RequestOptions) => {
   // 1. 返回 Promise 对象
@@ -68,20 +79,22 @@ export const request = <T>(options: UniApp.RequestOptions) => {
       success(res) {
         // 状态码 2xx， axios 就是这样设计的
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          // 2.1 提取核心数据 res.data
+          // 2.根据后端状态码来提示报错
+          if ((res.data as Data<T>).code === 400) {
+            safeShowToast((res.data as Data<T>).message || '请求错误')
+          }
+          // 抛出服务器返回的结果
           resolve(res.data as Data<T>)
         } else if (res.statusCode === 401) {
           // 401错误  -> 清理用户信息，跳转到登录页
           const userStore = useUserStore()
           userStore.clearProfile()
           uni.navigateTo({ url: '/pages/login/login' })
+          safeShowToast((res.data as Data<T>).message || '请求错误')
           reject(res)
         } else {
           // 其他错误 -> 根据后端错误信息轻提示
-          uni.showToast({
-            icon: 'none',
-            title: (res.data as Data<T>).message || '请求错误',
-          })
+          safeShowToast((res.data as Data<T>).message || '请求错误')
           reject(res)
         }
       },

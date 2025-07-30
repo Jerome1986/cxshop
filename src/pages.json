@@ -142,6 +142,34 @@
             "navigationBarTitleText": "个人资料",
             "enablePullDownRefresh": false
           }
+        },
+        {
+          "path": "admin/admin",
+          "style": {
+            "navigationBarTitleText": "后台管理",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "userManage/userManage",
+          "style": {
+            "navigationBarTitleText": "用户管理",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "cateManage/cateManage",
+          "style": {
+            "navigationBarTitleText": "分类管理",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "proManage/proManage",
+          "style": {
+            "navigationBarTitleText": "商品管理",
+            "enablePullDownRefresh": false
+          }
         }
       ]
     }
