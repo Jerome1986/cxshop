@@ -7,6 +7,10 @@ import type { CartItem } from '@/types/cart'
 export type OrderItem = {
   /** 唯一标识 */
   _id: string
+  /** 归属用户id */
+  userId: string
+  /** 用户电话 */
+  userMobile: string
   /** 商品列表 */
   prolist: CartItem[]
   /** 配送时间 */

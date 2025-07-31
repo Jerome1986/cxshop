@@ -1,6 +1,7 @@
 import { request } from '@/utils/http'
 import type { CartItem } from '@/types/cart'
 import type { OrderItem } from '@/types/OrderItem'
+import type { UpdateResult } from '@/types/Global'
 // 新增后返回新增的id
 interface orderAddResult {
   insertedId: string
@@ -9,6 +10,7 @@ interface orderAddResult {
  * 新增订单
  * /order/add
  * @param {string} userId 当前用户id
+ * @param {string} userMobile - 用户联系电话
  * @param {CartItem[]} prolist - 商品列表
  * @param {string} deliveryTime - 配送时间
  * @param {string} dec - 订单备注
@@ -19,6 +21,7 @@ interface orderAddResult {
 
 export const orderAddApi = (
   userId: string,
+  userMobile: string,
   prolist: CartItem[],
   deliveryTime: string,
   dec: string,
@@ -29,7 +32,7 @@ export const orderAddApi = (
   return request<orderAddResult>({
     method: 'POST',
     url: '/order/add',
-    data: { userId, prolist, deliveryTime, dec, totalPrice, totalNum, status },
+    data: { userId, userMobile, prolist, deliveryTime, dec, totalPrice, totalNum, status },
   })
 }
 
@@ -60,5 +63,50 @@ export const orderDelApi = (userId: string, orderId: string) => {
     method: 'POST',
     url: '/order/remove',
     data: { userId, orderId },
+  })
+}
+
+/**
+ * 管理员获取用户订单
+ * /order/admin/get
+ */
+
+export const adminOrderGetApi = (role: string, orderStatus: string) => {
+  return request<OrderItem[]>({
+    method: 'GET',
+    url: '/order/admin/get',
+    data: { role, orderStatus },
+  })
+}
+
+/**
+ * 管理员更新用户订单
+ * /order/admin/upStatus
+ * @param {string} role - 当前操作的角色
+ * @param {string} orderStatus - 当前订单的状态
+ * @param {string} orderId - 当前订单的id
+ */
+
+export const adminOrderUpdateApi = (role: string, orderStatus: string, orderId: string) => {
+  return request({
+    method: 'POST',
+    url: '/order/admin/upStatus',
+    data: { role, orderStatus, orderId },
+  })
+}
+
+/**
+ * 用户签收
+ * /order/sign
+ * @param {string} userId - 当前用户id
+ * @param {string} orderId - 当前订单id
+ * @param {string} orderStatus 当前订单状态
+ */
+
+export const userOrderSignApi = (userId: string, orderId: string, orderStatus: string) => {
+  return request<UpdateResult>({
+    method: 'POST',
+    url: '/order/sign',
+    data: { userId, orderId, orderStatus },
   })
 }

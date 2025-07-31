@@ -12,6 +12,8 @@ const userStore = useUserStore()
 const { safeAreaInsets } = uni.getSystemInfoSync()
 // 订单备注
 const buyerMessage = ref('')
+// 联系方式
+const userMobile = ref(userStore.profile.mobile || '')
 // 配送时间
 const deliveryList = ref([
   { type: 1, text: '时间不限 (周一至周日)' },
@@ -34,6 +36,7 @@ const orderSubmit = async () => {
   // 准备提交的数据
   const res = await orderAddApi(
     userStore.profile._id,
+    userStore.profile.mobile,
     prolist,
     activeDelivery.value.text,
     buyerMessage.value,
@@ -123,6 +126,15 @@ const orderSubmit = async () => {
           :cursor-spacing="30"
           placeholder="选题，建议留言前先与商家沟通确认"
           v-model="buyerMessage"
+        />
+      </view>
+      <view class="item">
+        <text class="text">联系方式</text>
+        <input
+          class="input"
+          :cursor-spacing="30"
+          placeholder="请填写联系方式"
+          v-model="userMobile"
         />
       </view>
     </view>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { orderDelApi, orderGetApi } from '@/api/order'
+import { orderDelApi, orderGetApi, userOrderSignApi } from '@/api/order'
 import { useUserStore } from '@/store'
 import type { OrderItem } from '@/types/OrderItem'
 import { formatTimestamp } from '@/utils/formatTimestamp'
@@ -68,13 +68,29 @@ const onDel = (orderId: string) => {
 }
 
 // 签收
-const qianshou = (orderId: string) => {
+const qianshou = async (orderId: string, orderStatus: string) => {
   // 签收后订单改为已完成
-  console.log('qianshou', orderId)
+  console.log('qianshou', orderId, orderStatus)
+  uni.showModal({
+    title: '提示',
+    content: '确定已收货?',
+    confirmColor: '#27ba9b',
+    success: async (result) => {
+      if (result.confirm) {
+        const res = await userOrderSignApi(userStore.profile._id, orderId, orderStatus)
+        if (res.code === 200) {
+          await orderListGet(userStore.profile._id, orderTabs.value[activeIndex.value].title)
+          await uni.showToast({ icon: 'success', title: '已签收' })
+        }
+      }
+    },
+  })
 }
 
 onLoad(() => {
-  orderListGet(userStore.profile._id, query.orderStatus)
+  if (query.orderStatus) {
+    orderListGet(userStore.profile._id, query.orderStatus)
+  }
 })
 </script>
 <template>
@@ -105,7 +121,7 @@ onLoad(() => {
               <!-- 订单状态文字 -->
               <text>{{ k.status }}</text>
               <!-- 待评价/已完成/已取消 状态: 展示删除订单 -->
-              <text class="icon-delete" @tap="onDel(k._id)"></text>
+              <text v-if="k.status !== '待收货'" class="icon-delete" @tap="onDel(k._id)"></text>
             </view>
             <!-- 商品信息，点击商品跳转到订单详情，不是商品详情 -->
             <navigator
@@ -134,7 +150,7 @@ onLoad(() => {
               </text>
             </view>
             <view class="qianshou" v-if="activeIndex === 2 && orderList.length > 0">
-              <button @tap="qianshou(k._id)" size="mini">签收</button>
+              <button @tap="qianshou(k._id, k.status)" size="mini">签收</button>
             </view>
           </view>
 
